@@ -23,6 +23,7 @@ const BilboSlide = () => {
   const dom = document.createElement('div');
   dom.classList.add('bilbo-slide');
   dom.innerHTML = `
+  <img class='elder-uchtdorf-portrait' src='https://patchbay.pub${channelId}/elder_uchtdorf.jpg'></img>
   <p>
 The story of Bilbo Baggins is about a most normal and unremarkable hobbit who is presented with a most remarkable opportunity﻿—the wonderful chance at adventure and the promise of a great reward.
   </p>
@@ -45,6 +46,7 @@ And yet, the call to adventure has reached deep into his heart. And so, this unr
 const TerrifiedSlide = () => {
   const dom = document.createElement('div');
   dom.innerHTML = `
+    <img class='elder-uchtdorf-portrait' src='https://patchbay.pub${channelId}/elder_uchtdorf.jpg'></img>
     <p>
       There must have been parts of the mortal adventure that worried and even
       terrified God’s children, since a large number of our spiritual brothers
@@ -57,6 +59,7 @@ const TerrifiedSlide = () => {
 const DistractionsSlide = () => {
   const dom = document.createElement('div');
   dom.innerHTML = `
+  <img class='elder-uchtdorf-portrait' src='https://patchbay.pub${channelId}/elder_uchtdorf.jpg'></img>
   <p>
 And yet, mortal life has a way of distracting us, doesn’t it? We tend to lose sight of our great quest, preferring comfort and ease over growth and progress.
 
@@ -76,6 +79,7 @@ const DiscipleshipSlide = () => {
   const dom = document.createElement('div');
   dom.innerHTML = `
     <p>
+    <img class='elder-uchtdorf-portrait' src='https://patchbay.pub${channelId}/elder_uchtdorf.jpg'></img>
     If you hesitate in this adventure because you doubt your ability, remember that discipleship is not about doing things perfectly; it’s about doing things intentionally. It is your choices that show what you truly are, far more than your abilities.
     </p>
   `;
@@ -85,6 +89,7 @@ const DiscipleshipSlide = () => {
 const ReachOutSlide = () => {
   const dom = document.createElement('div');
   dom.innerHTML = `
+  <img class='elder-uchtdorf-portrait' src='https://patchbay.pub${channelId}/elder_uchtdorf.jpg'></img>
   <p>
 There is something interesting, almost paradoxical, about this path you’ve chosen: the only way for you to progress in your gospel adventure is to help others progress as well.
   </p>
@@ -110,6 +115,7 @@ When you fill your hearts with the pure love of Christ, you leave no room for ra
 const NoSellSlide = () => {
   const dom = document.createElement('div');
   dom.innerHTML = `
+  <img class='elder-uchtdorf-portrait' src='https://patchbay.pub${channelId}/elder_uchtdorf.jpg'></img>
   <p>
 May I remind you that God does not need you to “sell” the restored gospel or the Church of Jesus Christ.
 </p>
@@ -136,6 +142,7 @@ const TreeOfLifeSlide = () => {
 const ItWorksExcerptSlide = () => {
   const dom = document.createElement('div');
   dom.innerHTML = `
+  <img class='elder-uchtdorf-portrait' src='https://patchbay.pub${channelId}/elder_uchtdorf.jpg'></img>
   <h1>Excerpt from "It Works Wonderfully!" talk</h1>
   <p>
 When it comes to spiritual truth, how can we know that we are on the right path?
@@ -267,6 +274,10 @@ const SlideDeck = () => {
   const followPresenterControl = FollowPresenterControl();
   followPresenterControl.addEventListener('follow-change', (e) => {
     followPresenter = e.detail.follow;
+
+    if (followPresenter) {
+      syncWithPresenter();
+    }
   });
   controlBar.appendChild(followPresenterControl);
 
@@ -289,13 +300,18 @@ const SlideDeck = () => {
   slideEl.classList.add('slide');
   slideDeck.appendChild(slideEl);
 
-  (async () => {
-
+  async function syncWithPresenter() {
     const response = await fetch(`https://patchbay.pub${channelId}/current-page`);
     const serverSlideId = await response.text();
     const { slide, index } = findSlide(serverSlideId); 
+    console.log(slide);
     curSlideIndex = index;
     renderSlide(slide);
+  }
+
+  (async () => {
+
+    syncWithPresenter();
 
     const evtSource = new EventSource(`https://patchbay.pub${channelId}/current-page?mime=text%2Fevent-stream&pubsub=true&persist=true`);
     evtSource.onmessage = function(event) {
