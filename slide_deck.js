@@ -199,24 +199,24 @@ But why does it seem to work better for some than for others? What is the differ
   return dom;
 };
 
-const slides = [
-  { id: 'qr', component: QrSlide },
-  { id: 'meme', component: MemeSlide },
-  { id: 'bilbo', component: BilboSlide },
-  { id: 'terrified', component: TerrifiedSlide },
-  { id: 'distractions', component: DistractionsSlide },
-  { id: 'discipleship', component: DiscipleshipSlide },
-  { id: 'reach-out', component: ReachOutSlide },
-  { id: 'no-sell', component: NoSellSlide },
-  { id: 'tree-of-life', component: TreeOfLifeSlide },
-  { id: 'it-works-excerpt', component: ItWorksExcerptSlide },
-];
-
-let curSlideIndex = 0;
-let curSlide = slides[curSlideIndex];
-
 
 const SlideDeck = () => {
+  const slides = [
+    { id: 'qr', component: QrSlide },
+    { id: 'meme', component: MemeSlide },
+    { id: 'bilbo', component: BilboSlide },
+    { id: 'terrified', component: TerrifiedSlide },
+    { id: 'distractions', component: DistractionsSlide },
+    { id: 'discipleship', component: DiscipleshipSlide },
+    { id: 'reach-out', component: ReachOutSlide },
+    { id: 'no-sell', component: NoSellSlide },
+    { id: 'tree-of-life', component: TreeOfLifeSlide },
+    { id: 'it-works-excerpt', component: ItWorksExcerptSlide },
+  ];
+
+  let curSlideIndex = 0;
+  let curSlide = slides[curSlideIndex];
+
   //const slideDeck = document.querySelector('.root');
   const slideDeck = document.createElement('div');
 
