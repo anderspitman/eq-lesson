@@ -1,0 +1,32 @@
+:root {
+  --btn-height: 35px;
+}
+
+img {
+  display: block;
+  margin-left: 0;
+  margin-right: 0;
+  width: 100%;
+}
+
+.slide {
+  font-family: Arial;
+  font-size: 22px;
+  line-height: 1.4;
+}
+
+.change-slide-btn {
+  font-size: 18px;
+  height: var(--btn-height);
+}
+
+.control-bar {
+  position: sticky;
+  display: flex;
+  justify-content: space-between;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: #fff;
+  border: 1px solid #222;
+}

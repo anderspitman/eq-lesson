@@ -42,10 +42,13 @@ function receiveCurrentPage {
 }
 
 hostFile / ./index.html &
-hostFile /index.js ./index.js &
+hostFile /slide_deck.js ./slide_deck.js &
+hostFile /slide_deck.css ./slide_deck.css &
 hostFile /current-page ./current_page.txt &
 hostFile /meme.jpg ./meme.jpg &
 hostFile /qr.svg ./qr.svg &
 receiveCurrentPage &
+
+hostFile /presenter ./presenter.html &
 
 wait

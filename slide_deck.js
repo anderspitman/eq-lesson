@@ -198,6 +198,7 @@ But why does it seem to work better for some than for others? What is the differ
   `;
   return dom;
 };
+
 const slides = [
   { id: 'qr', component: QrSlide },
   { id: 'meme', component: MemeSlide },
@@ -215,84 +216,92 @@ let curSlideIndex = 0;
 let curSlide = slides[curSlideIndex];
 
 
-const root = document.querySelector('.root');
+const SlideDeck = () => {
+  //const slideDeck = document.querySelector('.root');
+  const slideDeck = document.createElement('div');
 
-const controlBar = document.createElement('div');
-controlBar.classList.add('control-bar');
+  const controlBar = document.createElement('div');
+  controlBar.classList.add('control-bar');
 
-const prevSlideBtn = document.createElement('button');
-prevSlideBtn.classList.add('change-slide-btn');
-prevSlideBtn.innerText = "Previous";
-prevSlideBtn.addEventListener('click', (e) => {
-  curSlideIndex -= 1;
-  if (curSlideIndex === -1) {
-    curSlideIndex = slides.length - 1;
-  }
-  curSlide = slides[curSlideIndex];
-  renderSlide(curSlide);
-});
-controlBar.appendChild(prevSlideBtn);
+  const prevSlideBtn = document.createElement('button');
+  prevSlideBtn.classList.add('change-slide-btn');
+  prevSlideBtn.innerText = "Previous";
+  prevSlideBtn.addEventListener('click', (e) => {
+    curSlideIndex -= 1;
+    if (curSlideIndex === -1) {
+      curSlideIndex = slides.length - 1;
+    }
+    curSlide = slides[curSlideIndex];
+    renderSlide(curSlide);
+  });
+  controlBar.appendChild(prevSlideBtn);
 
-const nextSlideBtn = document.createElement('button');
-nextSlideBtn.classList.add('next-slide-btn', 'change-slide-btn');
-nextSlideBtn.innerText = "Next";
-nextSlideBtn.addEventListener('click', (e) => {
-  curSlideIndex += 1;
-  if (curSlideIndex === slides.length) {
-    curSlideIndex = 0;
-  }
-  curSlide = slides[curSlideIndex];
-  renderSlide(curSlide);
-});
-controlBar.appendChild(nextSlideBtn);
+  const nextSlideBtn = document.createElement('button');
+  nextSlideBtn.classList.add('next-slide-btn', 'change-slide-btn');
+  nextSlideBtn.innerText = "Next";
+  nextSlideBtn.addEventListener('click', (e) => {
+    curSlideIndex += 1;
+    if (curSlideIndex === slides.length) {
+      curSlideIndex = 0;
+    }
+    curSlide = slides[curSlideIndex];
+    renderSlide(curSlide);
+  });
+  controlBar.appendChild(nextSlideBtn);
 
-root.appendChild(controlBar);
+  slideDeck.appendChild(controlBar);
 
-const slideEl = document.createElement('div');
-slideEl.classList.add('slide');
-root.appendChild(slideEl);
+  const slideEl = document.createElement('div');
+  slideEl.classList.add('slide');
+  slideDeck.appendChild(slideEl);
 
-(async () => {
+  (async () => {
 
-  const response = await fetch(`https://patchbay.pub${channelId}/current-page`);
-  const serverSlideId = await response.text();
-  const { slide, index } = findSlide(serverSlideId); 
-  curSlideIndex = index;
-  renderSlide(slide);
-
-  const evtSource = new EventSource(`https://patchbay.pub${channelId}/current-page?mime=text%2Fevent-stream&pubsub=true&persist=true`);
-  evtSource.onmessage = function(event) {
-    const serverSlideId = event.data;
+    const response = await fetch(`https://patchbay.pub${channelId}/current-page`);
+    const serverSlideId = await response.text();
     const { slide, index } = findSlide(serverSlideId); 
     curSlideIndex = index;
     renderSlide(slide);
-  };
-})();
 
-function findSlide(slideId) {
-  let slide;
-  let i;
-  for (i = 0; i < slides.length; i++) {
-    if (slides[i].id === slideId) {
-      slide = slides[i];
-      break;
+    const evtSource = new EventSource(`https://patchbay.pub${channelId}/current-page?mime=text%2Fevent-stream&pubsub=true&persist=true`);
+    evtSource.onmessage = function(event) {
+      const serverSlideId = event.data;
+      const { slide, index } = findSlide(serverSlideId); 
+      curSlideIndex = index;
+      renderSlide(slide);
+    };
+  })();
+
+  function findSlide(slideId) {
+    let slide;
+    let i;
+    for (i = 0; i < slides.length; i++) {
+      if (slides[i].id === slideId) {
+        slide = slides[i];
+        break;
+      }
+    }
+    return { slide, index: i };
+  }
+
+  function renderSlide(slide) {
+
+
+    if (slide) {
+      const slideEl = document.createElement('div');
+      slideEl.classList.add('slide');
+      slideEl.appendChild(slide.component());
+
+      const oldSlideEl = slideDeck.querySelector('.slide');
+      slideDeck.replaceChild(slideEl, oldSlideEl);
+    }
+    else {
+        console.error("Invalid slideId", slideId);
     }
   }
-  return { slide, index: i };
-}
 
-function renderSlide(slide) {
+  return slideDeck;
+};
 
 
-  if (slide) {
-    const slideEl = document.createElement('div');
-    slideEl.classList.add('slide');
-    slideEl.appendChild(slide.component());
-
-    const oldSlideEl = root.querySelector('.slide');
-    root.replaceChild(slideEl, oldSlideEl);
-  }
-  else {
-      console.error("Invalid slideId", slideId);
-  }
-}
+export { SlideDeck };

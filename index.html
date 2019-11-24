@@ -5,43 +5,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>EQ lesson</title>
-    <!--
-    <link rel="stylesheet" type="text/css" href="./apps/simple_chat/chat.css">
-    -->
+    <link rel="stylesheet" type="text/css" href="./slide_deck.css">
     <style>
 
       :root {
               --main-max-width: 640px;
-              --btn-height: 35px;
       }
 
       main {
         max-width: var(--main-max-width);
         margin: 0 auto;
-        font-family: Arial;
-        font-size: 22px;
-        line-height: 1.4;
-      }
-
-      img {
-        max-width: 100%;
-        max-height: 100%;
-      }
-
-      .change-slide-btn {
-        font-size: 18px;
-        height: var(--btn-height);
-      }
-
-      .control-bar {
-        position: fixed;
-        display: flex;
-        justify-content: space-between;
-        top: 0;
-        left: 0;
-        right: 0;
-        background-color: #fff;
-        border: 1px solid #222;
       }
 
       .slide {
@@ -55,6 +28,11 @@
 
     <main class='root'></main>
 
-    <script type='module' src='./index.js'></script>
+    <script type='module'>
+      import { SlideDeck } from './slide_deck.js';
+      const root = document.querySelector('.root');
+      const slideDeck = SlideDeck();
+      root.appendChild(slideDeck);
+    </script>
   </body>
 </html>
