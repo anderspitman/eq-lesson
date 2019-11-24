@@ -28,11 +28,17 @@
     <main class='root'></main>
 
     <script type='module'>
-      import { SlideDeck } from './slide_deck.js';
+      import {
+        SLIDES, SlideDeck
+      } from './slide_deck.js';
 
-      const Presenter = () => {
+      const Presenter = (channel) => {
         const dom = document.createElement('div');
         dom.classList.add('presenter');
+
+        const slides = SLIDES;
+
+        let curSlideIndex = 0;
 
         const leftPanel = document.createElement('div');
         leftPanel.classList.add('left-panel');
@@ -43,8 +49,37 @@
 
         const rightPanel = document.createElement('div');
         rightPanel.classList.add('right-panel');
-        const sd2 = SlideDeck();
-        rightPanel.appendChild(sd2);
+
+        
+        const prevSlideBtn = document.createElement('button');
+        prevSlideBtn.classList.add('prev-slide-btn', 'change-slide-btn');
+        prevSlideBtn.innerText = "Previous";
+        prevSlideBtn.addEventListener('click', (e) => {
+          curSlideIndex -= 1;
+          if (curSlideIndex === -1) {
+            curSlideIndex = slides.length - 1;
+          }
+          fetch(channel + '/set-current-page', {
+            method: 'POST',
+            body: slides[curSlideIndex].id,
+          });
+        });
+        rightPanel.appendChild(prevSlideBtn);
+
+        const nextSlideBtn = document.createElement('button');
+        nextSlideBtn.classList.add('next-slide-btn', 'change-slide-btn');
+        nextSlideBtn.innerText = "Next";
+        nextSlideBtn.addEventListener('click', (e) => {
+          curSlideIndex += 1;
+          if (curSlideIndex === slides.length) {
+            curSlideIndex = 0;
+          }
+          fetch(channel + '/set-current-page', {
+            method: 'POST',
+            body: slides[curSlideIndex].id,
+          });
+        });
+        rightPanel.appendChild(nextSlideBtn);
 
         dom.appendChild(rightPanel);
 
@@ -52,7 +87,8 @@
       };
 
       const root = document.querySelector('.root');
-      const presenter = Presenter();
+      const channel = 'https://patchbay.pub/eq-lesson';
+      const presenter = Presenter(channel);
       root.appendChild(presenter);
     </script>
   </body>
