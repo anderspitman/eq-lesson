@@ -309,20 +309,36 @@ const SlideDeck = () => {
     renderSlide(slide);
   }
 
-  (async () => {
 
-    syncWithPresenter();
+  syncWithPresenter();
 
-    const evtSource = new EventSource(`https://patchbay.pub${channelId}/current-page?mime=text%2Fevent-stream&pubsub=true&persist=true`);
-    evtSource.onmessage = function(event) {
-      if (followPresenter) {
-        const serverSlideId = event.data;
-        const { slide, index } = findSlide(serverSlideId); 
-        curSlideIndex = index;
-        renderSlide(slide);
-      }
-    };
-  })();
+  const evtSource = new EventSource(`https://patchbay.pub${channelId}/current-page?mime=text%2Fevent-stream&pubsub=true&persist=true`);
+  evtSource.onmessage = function(event) {
+    if (followPresenter) {
+      const serverSlideId = event.data;
+      const { slide, index } = findSlide(serverSlideId); 
+      curSlideIndex = index;
+      renderSlide(slide);
+    }
+  };
+
+  // broadcast heartbeat with ID every 5 seconds
+  const id = genId();
+  setInterval(() => {
+    fetch(`https://patchbay.pub${channelId}/heartbeats?pubsub=true`, {
+      method: 'POST',
+      body: `data: ${id}\n\n`,
+    });
+  }, 5000);
+
+  const chosenEvtSource = new EventSource(`https://patchbay.pub${channelId}/signal?mime=text%2Fevent-stream&pubsub=true&persist=true`);
+  chosenEvtSource.onmessage = function(event) {
+    const chosenId = event.data;
+    if (chosenId === id) {
+      alert("You have been chosen!");
+    }
+  };
+
 
   function findSlide(slideId) {
     let slide;
@@ -337,7 +353,6 @@ const SlideDeck = () => {
   }
 
   function renderSlide(slide) {
-
 
     if (slide) {
       const slideEl = document.createElement('div');
@@ -355,6 +370,24 @@ const SlideDeck = () => {
   return slideDeck;
 };
 
+function genId() {
+  const possible = "0123456789abcdefghijkmnpqrstuvwxyz";
+
+  function genCluster() {
+    let cluster = "";
+    for (let i = 0; i < 4; i++) {
+      const randIndex = Math.floor(Math.random() * possible.length);
+      cluster += possible[randIndex];
+    }
+    return cluster;
+  }
+
+  let id = "";
+  id += genCluster();
+  id += '-';
+  id += genCluster();
+  return id;
+}
 
 export {
   SLIDES, SlideDeck
