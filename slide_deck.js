@@ -213,6 +213,30 @@ const SLIDES = [
   { id: 'it-works-excerpt', component: ItWorksExcerptSlide },
 ];
 
+const FollowPresenterControl = () => {
+  const dom = document.createElement('span');
+  dom.classList.add('follow-presenter-control');
+
+  const checkbox = document.createElement('input');
+  checkbox.classList.add('checkbox');
+  checkbox.setAttribute('type', 'checkbox');
+  checkbox.addEventListener('click', (e) => {
+    dom.dispatchEvent(new CustomEvent('follow-change', {
+      bubbles: true,
+      detail: {
+        follow: e.target.checked, 
+      },
+    }));
+  });
+  checkbox.checked = true;
+  dom.appendChild(checkbox);
+
+  const label = document.createElement('span');
+  label.innerText = "Follow Presenter";
+  dom.appendChild(label);
+  return dom;
+};
+
 const SlideDeck = () => {
 
   const slides = SLIDES;
@@ -238,6 +262,13 @@ const SlideDeck = () => {
     renderSlide(curSlide);
   });
   controlBar.appendChild(prevSlideBtn);
+
+  let followPresenter = true;
+  const followPresenterControl = FollowPresenterControl();
+  followPresenterControl.addEventListener('follow-change', (e) => {
+    followPresenter = e.detail.follow;
+  });
+  controlBar.appendChild(followPresenterControl);
 
   const nextSlideBtn = document.createElement('button');
   nextSlideBtn.classList.add('next-slide-btn', 'change-slide-btn');
@@ -268,10 +299,12 @@ const SlideDeck = () => {
 
     const evtSource = new EventSource(`https://patchbay.pub${channelId}/current-page?mime=text%2Fevent-stream&pubsub=true&persist=true`);
     evtSource.onmessage = function(event) {
-      const serverSlideId = event.data;
-      const { slide, index } = findSlide(serverSlideId); 
-      curSlideIndex = index;
-      renderSlide(slide);
+      if (followPresenter) {
+        const serverSlideId = event.data;
+        const { slide, index } = findSlide(serverSlideId); 
+        curSlideIndex = index;
+        renderSlide(slide);
+      }
     };
   })();
 
