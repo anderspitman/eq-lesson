@@ -12,6 +12,7 @@
 
       :root {
               --main-max-width: 640px;
+              --btn-height: 35px;
       }
 
       main {
@@ -29,14 +30,22 @@
 
       .change-slide-btn {
         font-size: 18px;
-        height: 35px;
+        height: var(--btn-height);
       }
 
-      .next-slide-btn {
-        float: right;
+      .control-bar {
+        position: fixed;
+        display: flex;
+        justify-content: space-between;
+        top: 0;
+        left: 0;
+        right: 0;
+        background-color: #fff;
+        border: 1px solid #222;
       }
 
       .slide {
+        margin-top: var(--btn-height);
       }
 
     </style>

@@ -54,6 +54,9 @@ let curSlide = slides[curSlideIndex];
 
 const root = document.querySelector('.root');
 
+const controlBar = document.createElement('div');
+controlBar.classList.add('control-bar');
+
 const prevSlideBtn = document.createElement('button');
 prevSlideBtn.classList.add('change-slide-btn');
 prevSlideBtn.innerText = "Previous";
@@ -65,7 +68,7 @@ prevSlideBtn.addEventListener('click', (e) => {
   curSlide = slides[curSlideIndex];
   renderSlide(curSlide);
 });
-root.appendChild(prevSlideBtn);
+controlBar.appendChild(prevSlideBtn);
 
 const nextSlideBtn = document.createElement('button');
 nextSlideBtn.classList.add('next-slide-btn', 'change-slide-btn');
@@ -78,7 +81,9 @@ nextSlideBtn.addEventListener('click', (e) => {
   curSlide = slides[curSlideIndex];
   renderSlide(curSlide);
 });
-root.appendChild(nextSlideBtn);
+controlBar.appendChild(nextSlideBtn);
+
+root.appendChild(controlBar);
 
 const slideEl = document.createElement('div');
 slideEl.classList.add('slide');
